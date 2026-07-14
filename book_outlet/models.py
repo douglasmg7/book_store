@@ -3,9 +3,27 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.utils.text import slugify
 
+class Address(models.Model):
+    street = models.CharField(max_length=30)
+    postal_code = models.CharField(max_length=10)
+    city = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{self.street} - {self.city}'
+
+    class Meta:
+        verbose_name_plural = 'Address Entries'
+
 class Author(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True)
+
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    def __str__(self):
+        return self.full_name()
 
 class Book(models.Model):
     title = models.CharField(max_length=50)
